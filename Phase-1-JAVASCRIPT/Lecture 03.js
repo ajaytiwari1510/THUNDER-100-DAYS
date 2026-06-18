@@ -99,3 +99,4 @@ console.log(~a);    // -6 (~0101 = 1010 in two's complement)
 console.log(a << 1); // 10 (0101 << 1 = 1010)
 console.log(a >> 1); // 2 (0101 >> 1 = 0010)
 
+
