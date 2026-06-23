@@ -275,9 +275,9 @@ console.log("chars:", chars); // ['T','h','u','n','d','e','r']
 let nums = [10, 20, 30, 40, 90, 3812, 2];
 
 // Basic destructuring — extract by position
-const [first, second] = nums;
-console.log("first:", first);   // 10
-console.log("second:", second); // 20
+const [firstNo, secondNo] = nums;
+console.log("first:", firstNo);   // 10
+console.log("second:", secondNo); // 20
 
 // Custom names — name doesn't matter!
 const [lion, tiger, bhains] = nums;
@@ -412,3 +412,410 @@ products.sort((a, b) => a.price - b.price);
 console.log("Sorted by price:");
 products.forEach(p => console.log(`${p.name}: ₹${p.price}`));
 
+
+
+
+
+// Lecture 6 — Practice Questions
+
+
+// Q1. Zomato Cart Manager
+// 1. Define the core cart operations
+function addItem(cart, item) {
+  cart.push(item); // Adds to the END of the array
+  return cart;
+}
+
+function removeLastItem(cart) {
+  cart.pop(); // Removes from the END of the array
+  return cart;
+}
+
+function addUrgentItem(cart, item) {
+  cart.unshift(item); // Adds to the BEGINNING of the array
+  return cart;
+}
+
+function removeFirstItem(cart) {
+  cart.shift(); // Removes from the BEGINNING of the array
+  return cart;
+}
+
+// 2. Execute the operations step-by-step
+let cart = [];
+console.log("Initial Cart:", cart);
+
+cart = addItem(cart, "Pizza");      
+console.log("After Pizza: ", cart);       // Expected: ["Pizza"]
+
+cart = addItem(cart, "Burger");     
+console.log("After Burger:", cart);       // Expected: ["Pizza", "Burger"]
+
+cart = addItem(cart, "Coke");       
+console.log("After Coke:  ", cart);       // Expected: ["Pizza", "Burger", "Coke"]
+
+cart = removeLastItem(cart);        
+console.log("After Pop:   ", cart);       // Expected: ["Pizza", "Burger"]
+
+cart = addUrgentItem(cart, "Water");
+console.log("After Urgent:", cart);       // Expected: ["Water", "Pizza", "Burger"]
+
+cart = removeFirstItem(cart);       
+console.log("After Shift: ", cart);       // Expected: ["Pizza", "Burger"]
+
+
+
+
+// // Q2. Student Grade Extractor
+// // 1. Define our mock relational database records array
+// let students = [  
+//   { name: "Lion",  marks: 92, city: "Raipur"  },  
+//   { name: "Tiger", marks: 78, city: "Delhi"   },  
+//   { name: "Raj",   marks: 85, city: "Mumbai"  },  
+//   { name: "Priya", marks: 95, city: "Chennai" },
+// ];
+
+// // 2. The analytics engine utilizing method pipelines
+// function analyzeStudents(studentsList) {  
+//   // Rule: Input size N -> Output size N. Transform object shape to raw strings.
+//   const names = studentsList.map(({ name }) => name);  
+  
+//   // Rule: Input size N -> Output size N. Transform object shape to numbers.
+//   const marks = studentsList.map(({ marks }) => marks);  
+  
+//   // Rule: Conditional filtering. Output size <= N. Retain complete structured objects.
+//   const toppers = studentsList.filter(({ marks }) => marks >= 90);  
+  
+//   // Rule: Collapse numeric data stream down to a single total cumulative sum scalar, then divide.
+//   const totalScoreSum = marks.reduce((runningAccumulator, currentMark) => runningAccumulator + currentMark, 0);
+//   const average = totalScoreSum / studentsList.length;  
+
+//   // Pack the newly computed metrics back into a clean payload object and return it
+//   return { names, marks, toppers, average };
+// }
+
+// // 3. Drive execution and capture outputs
+// const result = analyzeStudents(students);
+
+// // 4. Print clean logs to the debugger console
+// console.log("--- Student Data Analysis Metrics ---");
+// console.log("Names Matrix:  ", result.names);
+// console.log("Marks Matrix:  ", result.marks);
+
+// // Extract the names of our toppers array using a map transformation for printing readability
+// console.log("Toppers Found: ", result.toppers.map(({ name }) => name));
+// console.log("Class Average: ", result.average);
+
+// FAANG Optimization: 1 Loop, 4 Results
+// function analyzeStudentsOptimized(studentsList) {
+//   let names = [];
+//   let marks = [];
+//   let toppers = [];
+//   let totalScoreSum = 0;
+
+//   // We walk through the array EXACTLY ONCE
+//   for (let i = 0; i < studentsList.length; i++) {
+//     const { name, marks: score, city } = studentsList[i]; // Destructure once
+    
+//     names.push(name);
+//     marks.push(score);
+//     totalScoreSum += score;
+//     if (score >= 90) {
+//       toppers.push(studentsList[i]);
+//     }
+//   }
+
+//   return { names, marks, toppers, average: totalScoreSum / studentsList.length };
+// }
+
+
+
+
+
+// Q3. Paytm Transaction History
+let transactions = [500, 1200, 300, 2500, 800, 1500, -200, 900];
+
+function analyzeTransactions(txList) {
+  // 1. Scans left-to-right. Stops instantly at index 1 (1200). Time: O(n) worst case, exits early!
+  const firstBig = txList.findIndex(amount => amount > 1000);
+  
+  // 2. Scans right-to-left. Stops instantly at index 5 (1500). Time: O(n) worst case, exits early!
+  const lastBig = txList.findLastIndex(amount => amount > 1000);
+  
+  // 3. Scans for any negative value. Stops instantly at index 6 (-200). Returns true.
+  const hasRefund = txList.some(amount => amount < 0);
+  
+  return { firstBig, lastBig, hasRefund };
+}
+
+// Drive execution
+const result = analyzeTransactions(transactions);
+
+console.log("--- Paytm Ledger Analysis ---");
+console.log(`First Big Transaction Index: ${result.firstBig}`); // Expected: 1
+console.log(`Last Big Transaction Index:  ${result.lastBig}`);  // Expected: 5
+console.log(`Contains Counterparty Refund: ${result.hasRefund}`); // Expected: true
+
+
+// function analyzeTransactions(transactions) {
+//   const bigTx  = transactions.filter(t => t > 1000);
+//   const firstBig = transactions.indexOf(bigTx[0]);
+//   const lastBig  = transactions.lastIndexOf(bigTx[bigTx.length - 1]);
+//   const hasRefund = transactions.some(t => t < 0);
+//   const total    = transactions.reduce((s, t) => s + t, 0);
+//   return { firstBig, lastBig, hasRefund, total };
+// }
+
+// console.log(analyzeTransactions([500,1200,300,2500,800,1500,-200,900]));
+// { firstBig: 1, lastBig: 5, hasRefund: true, total: 7600 }
+
+
+
+
+// Q4. IPL Scorecard — 2D Array
+let scorecard = [  
+  [1, 0, 4, 6, 0, 2],   // Over 1 (Index 0) = 13 runs  
+  [0, 0, 1, 4, 6, 4],   // Over 2 (Index 1) = 15 runs  
+  [2, 1, 0, 0, 6, 6],   // Over 3 (Index 2) = 15 runs  
+  [4, 4, 0, 1, 2, 0],   // Over 4 (Index 3) = 11 runs
+];
+
+function analyzeIPLScorecard(matrix) {
+  // 1. Calculate runs per over: Transform each row array into a single sum number
+  const runsPerOver = matrix.map(over => over.reduce((sum, runs) => sum + runs, 0));
+
+  // 2. Calculate grand total: Sum up the cooked runsPerOver array
+  const totalScore = runsPerOver.reduce((total, overRuns) => total + overRuns, 0);
+
+  // 3. Find the best over: Find the highest runs, then locate its first index position
+  const maxRuns = Math.max(...runsPerOver); // Uses spread operator to unpack [13, 15, 15, 11] into individual arguments
+  const bestOver = runsPerOver.indexOf(maxRuns);
+
+  // 4. Count dot balls: Melt the 2D array into a flat 1D array of individual balls, then filter out non-zeros
+  const dotBalls = matrix.flat().filter(runs => runs === 0).length;
+
+  return { totalScore, runsPerOver, bestOver, dotBalls };
+}
+
+// Drive Execution
+const metrics = analyzeIPLScorecard(scorecard);
+
+console.log("--- IPL Analytics Dashboard ---");
+console.log("Total Score:    ", metrics.totalScore);    // 54
+console.log("Runs Per Over:  ", metrics.runsPerOver);  // [13, 15, 15, 11]
+console.log("Best Over Index:", metrics.bestOver);     // 1 (Over 2)
+console.log("Dot Balls Count:", metrics.dotBalls);     // 7
+
+
+
+// // Q5. Flipkart Product Filter + Sort
+// let products = [
+//   { name: "iPhone",   price: 79999, category: "mobile"  },
+//   { name: "Samsung",  price: 49999, category: "mobile"  },
+//   { name: "Laptop",   price: 55000, category: "laptop"  },
+//   { name: "OnePlus",  price: 35000, category: "mobile"  },
+//   { name: "MacBook",  price: 120000,category: "laptop"  },
+//   { name: "Realme",   price: 15000, category: "mobile"  },
+// ];
+
+// // filterProducts(products, "mobile", 50000)
+// // Expected: [{name:"OnePlus",price:35000},{name:"Realme",price:15000},{name:"Samsung",price:49999}]
+
+// function filterProducts(products, category, maxPrice) {
+//   return products
+//     .filter(p => p.category === category && p.price <= maxPrice)
+//     .sort((a, b) => a.price - b.price)
+//     .map(({ name, price }) => ({ name, price }));
+// }
+
+// console.log(filterProducts(products, "mobile", 50000));
+// // [{name:"Realme",price:15000},{name:"OnePlus",price:35000},{name:"Samsung",price:49999}]
+
+
+
+
+// Q6. OTP Slot Machine — splice + destructuring
+let queue = ["Raj", "Priya", "Lion", "Amit", "Sara", "Dev"];
+
+// Expected after operations:
+// served: ["Raj", "Priya", "Lion"]
+// after VIP insert at pos 2: ["Amit","Sara","VIP_Kumar","Dev"]
+// remaining: ["Amit","Sara","VIP_Kumar","Dev"]
+
+function manageBankQueue(queue, vipName, vipPosition) {
+  // serve first 3 — splice modifies original!
+  const served = queue.splice(0, 3);
+
+  // insert VIP at position
+  queue.splice(vipPosition, 0, vipName);
+
+  // destructure first two in remaining
+  const [next1, next2, ...rest] = queue;
+
+  return { served, remaining: queue, next1, next2, rest };
+}
+
+// let queue = ["Raj","Priya","Lion","Amit","Sara","Dev"];
+console.log(manageBankQueue(queue, "VIP_Kumar", 2));
+// served: ["Raj","Priya","Lion"]
+// remaining: ["Amit","Sara","VIP_Kumar","Dev"]
+// next1: "Amit", next2: "Sara"
+// rest: ["VIP_Kumar","Dev"]
+
+
+
+// Q7. Maximum Subarray — Kadane's Algorithm
+// Input:  [-2, 1, -3, 4, -1, 2, 1, -5, 4]
+// Output: 6
+// Explanation: [4, -1, 2, 1] has max sum = 6
+
+// Input:  [-1, -2, -3]
+// Output: -1 (all negative — pick least negative!)
+function maxSubarraySum(arr) {
+  let maxSum     = arr[0];  // handles all-negative case
+  let currentSum = arr[0];
+
+  for (let i = 1; i < arr.length; i++) {
+    // either extend current subarray or start fresh
+    currentSum = Math.max(arr[i], currentSum + arr[i]);
+    maxSum     = Math.max(maxSum, currentSum);
+  }
+  return maxSum;
+}
+
+console.log(maxSubarraySum([-2,1,-3,4,-1,2,1,-5,4])); // 6
+console.log(maxSubarraySum([-1,-2,-3]));               // -1
+console.log(maxSubarraySum([1,2,3,4]));                // 10
+
+// WHY currentSum = Math.max(arr[i], currentSum + arr[i])?
+// If currentSum is very negative — better to START FRESH from arr[i]
+// If currentSum helps — EXTEND the subarray!
+// This is the core insight of Kadane's algorithm!
+
+
+
+// Q8. Group Anagrams — Swiggy Menu Grouping
+// Input:  ["eat","tea","tan","ate","nat","bat"]
+// Output: [["eat","tea","ate"],["tan","nat"],["bat"]]
+
+// Real world: Swiggy groups menu items with same ingredients
+// FAANG: Google interview question!
+function groupAnagrams(words) {
+  const map = {};
+
+  for (let word of words) {
+    // sort letters → anagrams give same key!
+    // "eat" → "aet" | "tea" → "aet" | "ate" → "aet"
+    const key = word.split("").sort().join("");
+
+    if (!map[key]) map[key] = [];
+    map[key].push(word);
+  }
+
+  return Object.values(map);
+}
+
+console.log(groupAnagrams(["eat","tea","tan","ate","nat","bat"]));
+// [["eat","tea","ate"],["tan","nat"],["bat"]]
+
+// WHY sort the letters?
+// Anagrams contain same letters — sorting gives identical key!
+// "eat".split("").sort().join("") → "aet"
+// "tea".split("").sort().join("") → "aet"  ← same key!
+// HashMap groups them together!
+
+
+
+// Q9. IRCTC Seat Availability — 2D Array + Splice
+let train = [
+  ["S1", "S2",  "S3",  "S4"],   // Coach A
+  ["S5", "X",   "S7",  "S8"],   // Coach B (S6 booked)
+  ["S9", "S10", "X",   "S12"],  // Coach C (S11 booked)
+  ["X",  "S14", "S15", "X"],    // Coach D (S13,S16 booked)
+];
+
+function bookSeat(train, coach, seat) {
+  if (train[coach][seat] === "X") {
+    return "Already booked!";
+  }
+  const seatName = train[coach][seat];
+  train[coach][seat] = "X";
+  return `${seatName} booked successfully! ✅`;
+}
+
+function cancelSeat(train, coach, seat, seatName) {
+  train[coach][seat] = seatName;
+  return `${seatName} cancelled! 🔓`;
+}
+
+function findFirstAvailable(train) {
+  for (let c = 0; c < train.length; c++) {
+    for (let s = 0; s < train[c].length; s++) {
+      if (train[c][s] !== "X") {
+        return { coach: c, seat: s, name: train[c][s] };
+      }
+    }
+  }
+  return "Train full! 😱";
+}
+
+function countAvailable(train) {
+  return train.flat().filter(s => s !== "X").length;
+}
+
+console.log(bookSeat(train, 0, 0));       // S1 booked!
+console.log(bookSeat(train, 1, 1));       // Already booked!
+console.log(findFirstAvailable(train));   // {coach:0, seat:1, name:"S2"}
+console.log(countAvailable(train));       // 10 available
+console.log(cancelSeat(train, 1, 1, "S6")); // S6 cancelled!
+console.log(countAvailable(train));       // 11 available
+
+
+
+// Q10. Stock Buy Sell — Best Time to Buy
+// Input:  [7, 1, 5, 3, 6, 4]
+// Output: 5
+// Explanation: Buy at 1 (day 2), sell at 6 (day 5) → profit = 5
+
+// Input:  [7, 6, 4, 3, 1]
+// Output: 0
+// Explanation: prices falling — no profit possible!
+
+function maxProfit(prices) {
+  let minPrice  = prices[0];  // cheapest day to buy
+  let maxProfit = 0;          // best profit so far
+
+  for (let i = 1; i < prices.length; i++) {
+    // Can we buy cheaper?
+    if (prices[i] < minPrice) {
+      minPrice = prices[i];
+    }
+    // Is today's profit better than best so far?
+    const todayProfit = prices[i] - minPrice;
+    if (todayProfit > maxProfit) {
+      maxProfit = todayProfit;
+    }
+  }
+  return maxProfit;
+}
+
+console.log(maxProfit([7,1,5,3,6,4])); // 5
+console.log(maxProfit([7,6,4,3,1]));   // 0
+console.log(maxProfit([2,4,1,7]));     // 6 (buy at 1, sell at 7)
+
+// WHY this works:
+// At every day — best profit = today's price - cheapest price BEFORE today
+// We track minPrice as we go → one single pass → O(n)!
+// Brute force = O(n²) → two nested loops trying every pair!
+
+
+// Q1  → push/pop/shift/unshift — O(1) vs O(n)
+// Q2  → map/filter + destructuring
+// Q3  → indexOf/lastIndexOf/includes
+// Q4  → 2D array traversal + flat()
+// Q5  → filter + sort comparator + map chaining
+// Q6  → splice delete/insert + rest destructuring
+// Q7  → Kadane's algorithm — FAANG classic! (arrays)
+// Q8  → Group anagrams — HashMap + sort (Google!)
+// Q9  → 2D array + real world booking system
+// Q10 → Stock profit — Amazon/Microsoft classic!
